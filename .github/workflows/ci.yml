@@ -1,0 +1,32 @@
+name: CI/CD Pipeline
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        
+      - name: Configurar Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Instalar dependencias
+        run: npm install
+        
+      - name: Ejecutar ESLint
+        run: npm run lint
+        
+      - name: Ejecutar Jest con Cobertura >= 70%
+        run: npm test
+        
+      - name: Ejecutar SAST con Semgrep
+        uses: returntocorp/semgrep-action@v1
